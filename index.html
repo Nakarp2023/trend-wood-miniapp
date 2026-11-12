@@ -41,7 +41,7 @@ let mode='codes',category='Все',cart=JSON.parse(localStorage.getItem('tw_cart
 const rub=n=>Number(n).toLocaleString('ru-RU')+' ₽';
 function brandMark(id){
  const brands={apple:['apple','FFFFFF'],telegram:['telegram','FFFFFF'],playstation:['playstation','FFFFFF'],xbox:['xbox','FFFFFF'],roblox:['roblox','FFFFFF'],discord:['discord','FFFFFF'],chatgpt:['openai','FFFFFF'],vk:['vk','FFFFFF'],vkvideo:['vk','FFFFFF'],tbank:['tbank','FFFFFF'],sber:['sber','FFFFFF'],avito:['avito','FFFFFF'],ok:['odnoklassniki','FFFFFF']};
- const item=brands[id];
+ if(id==='xbox') return '<svg viewBox="0 0 64 64" role="img" aria-label="Xbox"><path fill="#fff" d="M8 18 25 6l7 4 7-4 17 12-9 6 9 22-24 12L8 46l9-22z"/><path fill="#107C10" d="M12 19 26 9l6 3 6-3 14 10-9 5 8 19-19 10L12 45l8-21z"/><path fill="#fff" d="M18 20c8 1 13 5 14 9 1-4 6-8 14-9-4 5-9 12-14 20-5-8-10-15-14-20z"/></svg>';\n const item=brands[id];
  const src=item?'https://cdn.simpleicons.org/'+item[0]+'/'+item[1]:(id==='fortnite'?'https://api.iconify.design/logos:fortnite.svg':null);
  return src?'<img class="brand-asset" src="'+src+'" alt="'+id+' brand logo" loading="eager" onerror="this.onerror=null;this.src=\'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/'+(item?item[0]:id)+'.svg\'">':'<span>'+({macs:'М'}[id]||'•')+'</span>'
 }
