@@ -65,13 +65,21 @@ function renderProductPage(){
  v.innerHTML='<section class="product-page"><button class="back-product" onclick="productPage=null;renderTab()">‹</button><div class="product-head"><div class="logo '+(p.bg||'')+'">'+brandMark(p.id)+'</div><h1>'+p.name+'</h1></div><div class="product-options">'+rows.map((r,i)=>'<button class="product-choice" onclick="chooseProductOption(\''+p.id+'\',\''+r[2]+'\')"><span>'+r[0]+'<small>'+r[1]+'</small></span><span class="choice-circle" aria-hidden="true"></span></button>').join('')+'</div></section>';
 }
 function chooseProductOption(id,key){
+ const p=P.find(x=>x.id===id);if(!p)return;
  if(id==='apple'){appleRegion(key);return}
  if(id==='ps'){psCategory(key);return}
- const p=P.find(x=>x.id===id),i=Number(key),v=p.values[i],price=p.prices?.[i]||p.price;
- cart.push({name:p.name,region:'',value:v,price});localStorage.setItem('tw_cart',JSON.stringify(cart));toast('Добавлено в корзину');
+ if(id==='xbox'){xboxRegion(key);return}
+ const i=Number(key),v=p.values[i],price=p.prices?.[i]??p.price;
+ addLine({name:p.name,region:p.regions?.[0]||'',value:v,price});
+}
+function addLine(item){cart.push(item);localStorage.setItem('tw_cart',JSON.stringify(cart));toast('Добавлено в корзину')}
+function xboxRegion(region){
+ const country=region==='eu'?'Европа':'США',currency=region==='eu'?'EUR':'USD';
+ const vals=[10,25,50,100].map(n=>({name:'Xbox Gift Card '+n+' '+currency,price:Math.round(n*(region==='eu'?145:130))}));
+ renderVariantScreen('Подарочные карты Xbox','',vals,'Xbox · '+country,'Код предназначен для аккаунта региона '+country);
 }
 function renderVariantScreen(title,icon,variants,subtitle,note){
- const brand=subtitle==='PlayStation'?'playstation':subtitle==='Apple Gift Cards'?'apple':null;
+ const brand=subtitle.startsWith('PlayStation')?'playstation':subtitle.startsWith('Apple')?'apple':subtitle.startsWith('Xbox')?'xbox':null;
  const mark=brand?'<div class="detail-brandmark">'+brandMark(brand)+'</div>':'<div class="detail-brandmark">'+icon+'</div>';
  document.getElementById('sheet').innerHTML='<div class="sheet-head"><small>'+subtitle+'</small><button class="close" onclick="closeModal()">×</button></div>'+mark+'<h2>'+title+'</h2>'+(note?'<p class="steps">'+note+'</p>':'')+'<div class="group">'+variants.map((v,i)=>'<button class="item" onclick="selectedVariant('+i+')"><span><b>'+v.name+'</b><br><small>от '+rub(v.price)+'</small></span><span class="choice-circle" aria-hidden="true"></span></button>').join('')+'</div>';
  window.detailVariants=variants;window.detailVariantTitle=subtitle+' · '+title;openModal();
@@ -79,15 +87,15 @@ function renderVariantScreen(title,icon,variants,subtitle,note){
 function selectedVariant(i){const v=window.detailVariants?.[i];if(!v)return;const title=window.detailVariantTitle||'Товар';cart.push({name:title,region:'',value:v.name,price:Number(v.price)||0});localStorage.setItem('tw_cart',JSON.stringify(cart));closeModal();renderTab();toast('Добавлено в корзину')}
 function psCategory(type){
  let arr,head;
- if(type==='topup'){head='💳 Пополнение счёта';arr=[{name:'🇹🇷 Турция',price:790},{name:'🇺🇸 США',price:690}];}
- else if(type==='plus'){head='✕ Подписки PS Plus';arr=[{name:'Тариф Essential',price:2990},{name:'Тариф Extra',price:4490},{name:'Тариф Deluxe',price:5390}];}
+ if(type==='topup'){head='Пополнение счёта';arr=[{name:'🇹🇷 Турция',price:790},{name:'🇺🇸 США',price:690}];}
+ else if(type==='plus'){head='Подписки PS Plus';arr=[{name:'Тариф Essential',price:2990},{name:'Тариф Extra',price:4490},{name:'Тариф Deluxe',price:5390}];}
  else{head='Тариф EA Play';arr=[{name:'EA Play',price:4990}];}
  if(type==='plus')arr.push({name:'Тариф EA Play',price:4990});
- renderVariantScreen(head,'🎮',arr,'PlayStation','Выберите нужный вариант');
+ renderVariantScreen(head,'','PlayStation'==='x'?[]:arr,'PlayStation','Выберите нужный вариант');
 }
 function appleRegion(region){
  let arr=region==='ru'?[{name:'Apple Gift Card 500 ₽',price:950},{name:'Apple Gift Card 600 ₽',price:1190},{name:'Apple Gift Card 1000 ₽',price:1900},{name:'Apple Gift Card 2000 ₽',price:3490},{name:'Apple Gift Card 3000 ₽',price:5390},{name:'Apple Gift Card 5000 ₽',price:8490}]:[{name:'Apple Gift Card $10',price:1450},{name:'Apple Gift Card $20',price:2590},{name:'Apple Gift Card $25',price:3190},{name:'Apple Gift Card $50',price:5940},{name:'Apple Gift Card $100',price:11960}];
- renderVariantScreen(region==='ru'?'🇷🇺 Россия':'🇺🇸 Америка','',arr,'Apple Gift Cards','Данные коды подойдут для аккаунтов Apple ID, если у вас выбран регион: '+(region==='ru'?'Россия 🇷🇺':'США 🇺🇸'));
+ renderVariantScreen(region==='ru'?'Россия':'Америка','',arr,'Apple Gift Cards','Данные коды подойдут для аккаунтов Apple ID, если у вас выбран регион: '+(region==='ru'?'Россия 🇷🇺':'США 🇺🇸'));
 }
 function pick(e){e.parentElement.querySelectorAll('.option').forEach(x=>x.classList.remove('selected'));e.classList.add('selected');if(e.parentElement.id==='values'&&selected){let i=[...e.parentElement.querySelectorAll('.option')].indexOf(e);let price=selected.prices?.[i]||selected.price;let el=document.getElementById('variantPrice');if(el)el.textContent=rub(price)}}
 function addCart(){let p=selected;let ri=[...document.querySelectorAll('#regions .option')].indexOf(document.querySelector('#regions .selected'));let vi=[...document.querySelectorAll('#values .option')].indexOf(document.querySelector('#values .selected'));cart.push({name:p.name,region:document.querySelector('#regions .selected').textContent,value:document.querySelector('#values .selected').textContent,price:p.prices?.[vi]||p.price});localStorage.setItem('tw_cart',JSON.stringify(cart));closeModal();renderTab();toast('Добавлено в корзину')}
