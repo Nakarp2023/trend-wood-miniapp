@@ -74,9 +74,9 @@ function renderVariantScreen(title,icon,variants,subtitle,note){
  const brand=subtitle==='PlayStation'?'playstation':subtitle==='Apple Gift Cards'?'apple':null;
  const mark=brand?'<div class="detail-brandmark">'+brandMark(brand)+'</div>':'<div class="detail-brandmark">'+icon+'</div>';
  document.getElementById('sheet').innerHTML='<div class="sheet-head"><small>'+subtitle+'</small><button class="close" onclick="closeModal()">×</button></div>'+mark+'<h2>'+title+'</h2>'+(note?'<p class="steps">'+note+'</p>':'')+'<div class="group">'+variants.map((v,i)=>'<button class="item" onclick="selectedVariant('+i+')"><span><b>'+v.name+'</b><br><small>от '+rub(v.price)+'</small></span><span class="choice-circle" aria-hidden="true"></span></button>').join('')+'</div>';
- window.detailVariants=variants;openModal();
+ window.detailVariants=variants;window.detailVariantTitle=subtitle+' · '+title;openModal();
 }
-function selectedVariant(i){let v=window.detailVariants[i];cart.push({name:selected.name||'Товар',region:'',value:v.name,price:v.price});localStorage.setItem('tw_cart',JSON.stringify(cart));closeModal();toast('Добавлено в корзину')}
+function selectedVariant(i){const v=window.detailVariants?.[i];if(!v)return;const title=window.detailVariantTitle||'Товар';cart.push({name:title,region:'',value:v.name,price:Number(v.price)||0});localStorage.setItem('tw_cart',JSON.stringify(cart));closeModal();renderTab();toast('Добавлено в корзину')}
 function psCategory(type){
  let arr,head;
  if(type==='topup'){head='💳 Пополнение счёта';arr=[{name:'🇹🇷 Турция',price:790},{name:'🇺🇸 США',price:690}];}
