@@ -15,6 +15,7 @@ body,button,input,textarea,select{font-family:-apple-system,BlinkMacSystemFont,"
 .product-options{display:grid;gap:10px;margin-top:20px}
 .option{border-radius:999px;padding:10px 16px;font-weight:550}
 .item{font-weight:550;letter-spacing:-.02em}
+.detail-brandmark{height:92px;display:grid;place-items:center;margin:14px 0 18px}.detail-brandmark img{width:90px;height:90px;object-fit:contain}.detail-brandmark .brand-asset{width:90px;height:90px}.sheet .item{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Arial,sans-serif;font-weight:600;letter-spacing:-.2px}.sheet .item small{font-weight:500;color:#7d8490}.sheet .item .choice-circle{width:23px;height:23px;border:2px solid #c8cdd5;border-radius:50%;flex:0 0 23px;background:#fff}.sheet .item:active .choice-circle{border-color:var(--blue);box-shadow:inset 0 0 0 5px #fff;background:var(--blue)}
 </style></head><body><main class="app"><header><div class="brand">TREND <span>WOOD</span></div><button class="support" onclick="toast('Поддержка Telegram подключается')">Поддержка ↗</button></header><div id="view"></div></main>
 <nav class="bottom"><button class="nav active" data-tab="catalog"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V21H3z"/><path d="M9 21v-7h6v7"/></svg>Магазин</button><button class="nav" data-tab="orders"><svg viewBox="0 0 24 24"><path d="M7 3h10M7 7h10M7 11h10M7 15h10M7 19h10"/></svg>Заказы</button><button class="nav" data-tab="ref"><svg viewBox="0 0 24 24"><circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2.5 20c0-4 2.5-6 5.5-6s5.5 2 5.5 6M10.5 20c0-3.5 2-5.5 5.5-5.5s5.5 2 5.5 5.5"/></svg>Друзья</button><button class="nav" data-tab="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>Профиль</button></nav>
 <div class="modal" id="modal" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div><div class="toast" id="toast"></div>
@@ -70,7 +71,9 @@ function chooseProductOption(id,key){
  cart.push({name:p.name,region:'',value:v,price});localStorage.setItem('tw_cart',JSON.stringify(cart));toast('Добавлено в корзину');
 }
 function renderVariantScreen(title,icon,variants,subtitle,note){
- document.getElementById('sheet').innerHTML='<div class="sheet-head"><small>'+subtitle+'</small><button class="close" onclick="closeModal()">×</button></div><div class="detail-logo">'+icon+'</div><h2>'+title+'</h2>'+(note?'<p class="steps">'+note+'</p>':'')+'<div class="group">'+variants.map((v,i)=>'<button class="item" onclick="selectedVariant('+i+')"><span><b>'+v.name+'</b><br><small>от '+rub(v.price)+'</small></span><span>◯</span></button>').join('')+'</div>';
+ const brand=subtitle==='PlayStation'?'playstation':subtitle==='Apple Gift Cards'?'apple':null;
+ const mark=brand?'<div class="detail-brandmark">'+brandMark(brand)+'</div>':'<div class="detail-brandmark">'+icon+'</div>';
+ document.getElementById('sheet').innerHTML='<div class="sheet-head"><small>'+subtitle+'</small><button class="close" onclick="closeModal()">×</button></div>'+mark+'<h2>'+title+'</h2>'+(note?'<p class="steps">'+note+'</p>':'')+'<div class="group">'+variants.map((v,i)=>'<button class="item" onclick="selectedVariant('+i+')"><span><b>'+v.name+'</b><br><small>от '+rub(v.price)+'</small></span><span class="choice-circle" aria-hidden="true"></span></button>').join('')+'</div>';
  window.detailVariants=variants;openModal();
 }
 function selectedVariant(i){let v=window.detailVariants[i];cart.push({name:selected.name||'Товар',region:'',value:v.name,price:v.price});localStorage.setItem('tw_cart',JSON.stringify(cart));closeModal();toast('Добавлено в корзину')}
