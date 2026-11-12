@@ -105,13 +105,4 @@ function info(t,s){document.getElementById('sheet').innerHTML='<div class="sheet
 function openModal(){document.getElementById('modal').style.display='flex'}function closeModal(){document.getElementById('modal').style.display='none'}
 function toast(s){let e=document.getElementById('toast');e.textContent=s;e.style.display='block';setTimeout(()=>e.style.display='none',2200)}
 renderTab();
-</script></body></html function brandMark(id){
-  const brands={apple:'apple',telegram:'telegram',playstation:'playstation',xbox:'xbox',roblox:'roblox',discord:'discord',chatgpt:'openai',vk:'vk',vkvideo:'vk',tbank:'tbank',sber:'sber',avito:'avito',ok:'odnoklassniki'};
-  if(id==='fortnite') return '<img class="brand-asset" src="https://api.iconify.design/logos:fortnite.svg" alt="Fortnite" onerror="this.onerror=null;this.parentElement.textContent=\'F\'">';
-  const slug=brands[id];
-  if(!slug) return '<span class="brand-fallback">'+(id==='macs'?'М':'•')+'</span>';
-  const primary='https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/'+slug+'.svg';
-  const secondary='https://cdn.simpleicons.org/'+slug+'/FFFFFF';
-  const tertiary='https://api.iconify.design/logos:'+({playstation:'playstation',xbox:'xbox',apple:'apple',telegram:'telegram',roblox:'roblox',discord:'discord',openai:'openai',vk:'vk',tbank:'tbank',sber:'sber',avito:'avito',odnoklassniki:'odnoklassniki'}[slug]||slug)+'.svg';
-  return '<img class="brand-asset" src="'+primary+'" alt="'+slug+' logo" loading="eager" onerror="if(!this.dataset.fallback){this.dataset.fallback=1;this.src=\''+secondary+'\'}else if(this.dataset.fallback===\'1\'){this.dataset.fallback=2;this.src=\''+tertiary+'\'}else{this.onerror=null;this.replaceWith(document.createTextNode(\''+(id==='playstation'?'PS':id==='xbox'?'X':'•')+'\'))}">';
- }>
+</script></body></html>
